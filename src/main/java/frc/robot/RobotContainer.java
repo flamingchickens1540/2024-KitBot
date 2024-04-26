@@ -35,8 +35,6 @@ public class RobotContainer {
    * switch on the top.*/
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
-  private final CommandXboxController m_copilotController =
-      new CommandXboxController(OperatorConstants.kOperatorControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -55,7 +53,7 @@ public class RobotContainer {
         new RunCommand(
             () ->
                 m_drivetrain.arcadeDrive(
-                    -m_driverController.getLeftY(), -m_driverController.getRightX()),
+                    m_driverController.getRightX(), m_driverController.getLeftY()),
             m_drivetrain));
 
     //Tank Drive
@@ -68,8 +66,8 @@ public class RobotContainer {
 
     /*Create an inline sequence to run when the operator presses and holds the A (green) button. Run the PrepareLaunch
      * command for 1 seconds and then run the LaunchNote command */
-    m_copilotController
-        .a()
+    m_driverController
+        .leftBumper()
         .whileTrue(
             new PrepareLaunch(m_launcher)
                 .withTimeout(LauncherConstants.kLauncherDelay)
@@ -78,7 +76,7 @@ public class RobotContainer {
 
     // Set up a binding to run the intake command while the operator is pressing and holding the
     // left Bumper
-    m_copilotController.leftBumper().whileTrue(m_launcher.getIntakeCommand());
+    m_driverController.rightBumper().whileTrue(m_launcher.getIntakeCommand());
   }
 
   /**
